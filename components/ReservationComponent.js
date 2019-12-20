@@ -4,6 +4,8 @@ import { Card } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker'
 import * as Animatable from 'react-native-animatable';
 import * as Permissions from 'expo-permissions';
+import { Notifications } from 'expo';
+
 
 class Reservation extends Component {
 
