@@ -5,6 +5,7 @@ import DatePicker from 'react-native-datepicker'
 import * as Animatable from 'react-native-animatable';
 import * as Permissions from 'expo-permissions';
 import { Notifications } from 'expo';
+import * as Calendar from 'expo-calendar';
 
 
 class Reservation extends Component {
@@ -25,7 +26,8 @@ class Reservation extends Component {
 
     okPressed() {
         console.log('OK Pressed');
-        this.presentLocalNotification(this.state.date)
+        this.presentLocalNotification(this.state.date);
+        this.addReservationToCalendar(this.state.date);
         this.resetForm();
     }
 
@@ -40,6 +42,35 @@ class Reservation extends Component {
             smoking: false,
             date: '',
         });
+    }
+
+    obtainCalendarPermission = async () => {
+        console.log('Asking for calendar permission........');
+        let calendarPermission = await Permissions.askAsync(Permissions.CALENDAR);
+        
+        return calendarPermission;
+    }
+
+    obtainReminderPermission = async () => {
+        console.log('Asking for reminder permission........');
+        let reminderPermission = await Permissions.askAsync(Permissions.REMINDERS);
+        
+        return reminderPermission;
+    }
+
+    addReservationToCalendar = async (date) => {
+        await this.obtainCalendarPermission();
+        await this.obtainReminderPermission();
+        const startDate = new Date(Date.parse(date));
+        const endDate = startDate + (2 * 60 * 60 * 1000);
+        Calendar.createEventAsync(Calendar.DEFAULT, {
+            title: 'Con Fusion Table Reservation',
+            startDate: startDate,
+            endDate : endDate,
+            location:  '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong',
+            timeZone: 'Asia/Hong_Kong',
+        },);
+        Alert.alert('A reservation has been added');
     }
 
     async obtainNotificationPermission() {
